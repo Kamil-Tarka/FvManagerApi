@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace FvManagerApi.Entities
 {
-    public class InvoicePossitions
+    public class InvoicePossition
     {
         public int Id { get; set; }
 

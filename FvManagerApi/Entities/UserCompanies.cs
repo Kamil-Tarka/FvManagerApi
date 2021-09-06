@@ -13,6 +13,6 @@ namespace FvManagerApi.Entities
         public virtual User User { get; set; }
 
         public int CompanyId { get; set; }
-        public virtual List<Company> Companies { get; set; }
+        public virtual Company Company { get; set; }
     }
 }

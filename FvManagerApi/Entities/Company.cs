@@ -9,12 +9,13 @@ namespace FvManagerApi.Entities
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public string Nip { get; set; }
+        public string? Nip { get; set; }
+        public bool IsPhisicalPerson { get; set; } = false;
 
-        public int AdressId { get; set; }
+        public int AddressId { get; set; }
         public virtual Address Address { get; set; }
 
-        public virtual List<UserCompanies> CompanyUsers { get; set; }
+        public virtual List<UserCompanies> UserCompanies { get; set; }
 
     }
 }

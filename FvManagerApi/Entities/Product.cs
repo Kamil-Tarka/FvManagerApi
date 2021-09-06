@@ -12,5 +12,7 @@ namespace FvManagerApi.Entities
         public decimal NetPrice { get; set; }
         public int TaxRate { get; set; }
 
+        public virtual List<InvoicePossition> InvoicePossitions { get; set; }
+
     }
 }
