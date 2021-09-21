@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FvManagerApi.Entities;
+using FvManagerApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -31,7 +32,18 @@ namespace FvManagerApi
 
             services.AddControllers();
             services.AddDbContext<FvManagerDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("FvManagerDbConnection")));
+            services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.AddConsole().AddFilter(DbLoggerCategory.Database.Command.Name, LogLevel.Information);
+                loggingBuilder.AddDebug();
+            });
+
             services.AddScoped<FvManagerSeeder>();
+            services.AddAutoMapper(this.GetType().Assembly);
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IInvoiceService, InvoiceService>();
+            services.AddScoped<ICompanyService, CompanyService>();
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FvManagerApi", Version = "v1" });

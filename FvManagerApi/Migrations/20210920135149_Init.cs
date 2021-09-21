@@ -3,23 +3,26 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace FvManagerApi.Migrations
 {
-    public partial class init : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Address",
+                name: "Company",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(180)", maxLength: 180, nullable: false),
+                    Nip = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
+                    IsPhisicalPerson = table.Column<bool>(type: "bit", nullable: false),
                     City = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Street = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     PostalCode = table.Column<string>(type: "nvarchar(6)", maxLength: 6, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Address", x => x.Id);
+                    table.PrimaryKey("PK_Company", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -42,7 +45,7 @@ namespace FvManagerApi.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    NetPrice = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
+                    NetPrice = table.Column<decimal>(type: "decimal(19,2)", precision: 19, scale: 2, nullable: false),
                     TaxRate = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -61,50 +64,6 @@ namespace FvManagerApi.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Role", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Company",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(180)", maxLength: 180, nullable: false),
-                    Nip = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
-                    IsPhisicalPerson = table.Column<bool>(type: "bit", nullable: false),
-                    AddressId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Company", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Company_Address_AddressId",
-                        column: x => x.AddressId,
-                        principalTable: "Address",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "User",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    RoleId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_User", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_User_Role_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Role",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -143,27 +102,23 @@ namespace FvManagerApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserCompanies",
+                name: "User",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    CompanyId = table.Column<int>(type: "int", nullable: false)
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserCompanies", x => x.Id);
+                    table.PrimaryKey("PK_User", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_UserCompanies_Company_CompanyId",
-                        column: x => x.CompanyId,
-                        principalTable: "Company",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserCompanies_User_UserId",
-                        column: x => x.UserId,
-                        principalTable: "User",
+                        name: "FK_User_Role_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Role",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -176,6 +131,7 @@ namespace FvManagerApi.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     InvoiceId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
+                    NetPrice = table.Column<decimal>(type: "decimal(19,4)", precision: 19, scale: 4, nullable: false),
                     TaxRate = table.Column<int>(type: "int", nullable: false),
                     Amount = table.Column<int>(type: "int", nullable: false)
                 },
@@ -195,11 +151,6 @@ namespace FvManagerApi.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Company_AddressId",
-                table: "Company",
-                column: "AddressId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Invoice_BuyerId",
@@ -230,16 +181,6 @@ namespace FvManagerApi.Migrations
                 name: "IX_User_RoleId",
                 table: "User",
                 column: "RoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserCompanies_CompanyId",
-                table: "UserCompanies",
-                column: "CompanyId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserCompanies_UserId",
-                table: "UserCompanies",
-                column: "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -248,7 +189,7 @@ namespace FvManagerApi.Migrations
                 name: "InvoicePossition");
 
             migrationBuilder.DropTable(
-                name: "UserCompanies");
+                name: "User");
 
             migrationBuilder.DropTable(
                 name: "Invoice");
@@ -257,19 +198,13 @@ namespace FvManagerApi.Migrations
                 name: "Product");
 
             migrationBuilder.DropTable(
-                name: "User");
+                name: "Role");
 
             migrationBuilder.DropTable(
                 name: "Company");
 
             migrationBuilder.DropTable(
                 name: "PaymentType");
-
-            migrationBuilder.DropTable(
-                name: "Role");
-
-            migrationBuilder.DropTable(
-                name: "Address");
         }
     }
 }

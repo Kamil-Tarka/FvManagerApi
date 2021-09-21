@@ -33,6 +33,13 @@ namespace FvManagerApi
                     _dbContext.Role.AddRange(roles);
                     _dbContext.SaveChanges();
                 }
+
+                if(!_dbContext.PaymentType.Any())
+                {
+                    var paymentTypes = GetPaymentTypes();
+                    _dbContext.PaymentType.AddRange(paymentTypes);
+                    _dbContext.SaveChanges();
+                }
             }
         }
 
@@ -51,6 +58,31 @@ namespace FvManagerApi
             };
 
             return roles;
+        }
+
+        private IEnumerable<PaymentType> GetPaymentTypes()
+        {
+            var paymentTypes = new List<PaymentType>()
+            {
+                new PaymentType()
+                {
+                    Name = "Gotówka"
+                },
+                new PaymentType()
+                {
+                    Name = "Przelew"
+                },
+                new PaymentType()
+                {
+                    Name="Karta płatnicza"
+                },
+                new PaymentType()
+                {
+                    Name="Blik"
+                }
+            };
+
+            return paymentTypes;
         }
     }
 }

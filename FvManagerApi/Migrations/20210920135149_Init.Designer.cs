@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FvManagerApi.Migrations
 {
     [DbContext(typeof(FvManagerDbContext))]
-    [Migration("20210906145245_init")]
-    partial class init
+    [Migration("20210920135149_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,7 +21,7 @@ namespace FvManagerApi.Migrations
                 .HasAnnotation("ProductVersion", "5.0.9")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("FvManagerApi.Entities.Address", b =>
+            modelBuilder.Entity("FvManagerApi.Entities.Company", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -32,31 +32,6 @@ namespace FvManagerApi.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("PostalCode")
-                        .IsRequired()
-                        .HasMaxLength(6)
-                        .HasColumnType("nvarchar(6)");
-
-                    b.Property<string>("Street")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Address");
-                });
-
-            modelBuilder.Entity("FvManagerApi.Entities.Company", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("AddressId")
-                        .HasColumnType("int");
 
                     b.Property<bool>("IsPhisicalPerson")
                         .HasColumnType("bit");
@@ -70,9 +45,17 @@ namespace FvManagerApi.Migrations
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
 
-                    b.HasKey("Id");
+                    b.Property<string>("PostalCode")
+                        .IsRequired()
+                        .HasMaxLength(6)
+                        .HasColumnType("nvarchar(6)");
 
-                    b.HasIndex("AddressId");
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
 
                     b.ToTable("Company");
                 });
@@ -130,6 +113,10 @@ namespace FvManagerApi.Migrations
                     b.Property<int>("InvoiceId")
                         .HasColumnType("int");
 
+                    b.Property<decimal>("NetPrice")
+                        .HasPrecision(19, 4)
+                        .HasColumnType("decimal(19,4)");
+
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
@@ -174,8 +161,8 @@ namespace FvManagerApi.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("NetPrice")
-                        .HasPrecision(19, 4)
-                        .HasColumnType("decimal(19,4)");
+                        .HasPrecision(19, 2)
+                        .HasColumnType("decimal(19,2)");
 
                     b.Property<int>("TaxRate")
                         .HasColumnType("int");
@@ -229,39 +216,6 @@ namespace FvManagerApi.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("User");
-                });
-
-            modelBuilder.Entity("FvManagerApi.Entities.UserCompanies", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserCompanies");
-                });
-
-            modelBuilder.Entity("FvManagerApi.Entities.Company", b =>
-                {
-                    b.HasOne("FvManagerApi.Entities.Address", "Address")
-                        .WithMany("Company")
-                        .HasForeignKey("AddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Address");
                 });
 
             modelBuilder.Entity("FvManagerApi.Entities.Invoice", b =>
@@ -321,35 +275,6 @@ namespace FvManagerApi.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("FvManagerApi.Entities.UserCompanies", b =>
-                {
-                    b.HasOne("FvManagerApi.Entities.Company", "Company")
-                        .WithMany("UserCompanies")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FvManagerApi.Entities.User", "User")
-                        .WithMany("UserCompanies")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Company");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("FvManagerApi.Entities.Address", b =>
-                {
-                    b.Navigation("Company");
-                });
-
-            modelBuilder.Entity("FvManagerApi.Entities.Company", b =>
-                {
-                    b.Navigation("UserCompanies");
-                });
-
             modelBuilder.Entity("FvManagerApi.Entities.Invoice", b =>
                 {
                     b.Navigation("InvoicePossitions");
@@ -358,11 +283,6 @@ namespace FvManagerApi.Migrations
             modelBuilder.Entity("FvManagerApi.Entities.Product", b =>
                 {
                     b.Navigation("InvoicePossitions");
-                });
-
-            modelBuilder.Entity("FvManagerApi.Entities.User", b =>
-                {
-                    b.Navigation("UserCompanies");
                 });
 #pragma warning restore 612, 618
         }

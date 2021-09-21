@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace FvManagerApi.Entities
+namespace FvManagerApi.Models
 {
-    public class Company
+    public class UpdateCompanyDto
     {
-        public int Id { get; set; }
         public string Name { get; set; }
         public string? Nip { get; set; }
         public bool IsPhisicalPerson { get; set; } = false;

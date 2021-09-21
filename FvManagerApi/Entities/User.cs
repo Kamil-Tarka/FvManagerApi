@@ -14,8 +14,5 @@ namespace FvManagerApi.Entities
 
         public int RoleId { get; set; }
         public virtual Role Role { get; set; }
-
-        public List<UserCompanies> UserCompanies { get; set; }
-
     }
 }
