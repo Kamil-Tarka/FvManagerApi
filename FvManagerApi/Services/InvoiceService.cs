@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using FvManagerApi.Entities;
+using FvManagerApi.Exceptions;
 using FvManagerApi.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,6 +41,11 @@ namespace FvManagerApi.Services
                 .Include(i => i.InvoicePossitions)
                 .FirstOrDefault(i => i.Id == invoiceId);
 
+            if(invoice is null)
+            {
+                throw new NotFoundException("Invoice not found");
+            }
+
             _dbContext.Invoice.Remove(invoice);
             _dbContext.SaveChanges();
         }
@@ -65,6 +71,12 @@ namespace FvManagerApi.Services
                 .Include(i => i.Buyer)
                 .Include(i => i.PaymentType)
                 .FirstOrDefault(i => i.Id == invoiceId);
+
+            if (invoiceEntity is null)
+            {
+                throw new NotFoundException("Invoice not found");
+            }
+
             var invoiceDto = _mapper.Map<InvoiceDto>(invoiceEntity);
 
             return invoiceDto;
@@ -76,7 +88,12 @@ namespace FvManagerApi.Services
                 .Include(i => i.InvoicePossitions)
                 .FirstOrDefault(i => i.Id == invoiceId);
 
-            if(dto.PaymentTypeId>0 && dto.PaymentTypeId!=invoice.PaymentTypeId)
+            if (invoice is null)
+            {
+                throw new NotFoundException("Invoice not found");
+            }
+
+            if (dto.PaymentTypeId>0 && dto.PaymentTypeId!=invoice.PaymentTypeId)
             {
                 invoice.PaymentTypeId = dto.PaymentTypeId;
             }

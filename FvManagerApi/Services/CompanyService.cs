@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using FvManagerApi.Entities;
+using FvManagerApi.Exceptions;
 using FvManagerApi.Models;
 
 namespace FvManagerApi.Services
@@ -32,6 +33,11 @@ namespace FvManagerApi.Services
         {
             var company = _dbContext.Company.FirstOrDefault(c => c.Id == companyId);
 
+            if (company is null)
+            {
+                throw new NotFoundException("Company not found");
+            }
+
             _dbContext.Company.Remove(company);
             _dbContext.SaveChanges();
         }
@@ -47,6 +53,11 @@ namespace FvManagerApi.Services
         {
             var company = _dbContext.Company.FirstOrDefault(c => c.Id == companyId);
 
+            if (company is null)
+            {
+                throw new NotFoundException("Company not found");
+            }
+
             var companyDto = _mapper.Map<CompanyDto>(company);
 
             return companyDto;
@@ -56,7 +67,12 @@ namespace FvManagerApi.Services
         {
             var company = _dbContext.Company.FirstOrDefault(c => c.Id == companyId);
 
-            if(dto.Name is not null && company.Name!=dto.Name)
+            if (company is null)
+            {
+                throw new NotFoundException("Company not found");
+            }
+
+            if (dto.Name is not null && company.Name!=dto.Name)
             {
                 company.Name = dto.Name;
             }

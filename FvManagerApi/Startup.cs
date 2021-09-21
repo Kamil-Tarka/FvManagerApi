@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FvManagerApi.Entities;
+using FvManagerApi.Middleware;
 using FvManagerApi.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -29,7 +30,8 @@ namespace FvManagerApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddScoped<ErrorHandlingMiddleware>();
+            services.AddScoped<RequestTimeMiddleware>();
             services.AddControllers();
             services.AddDbContext<FvManagerDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("FvManagerDbConnection")));
             services.AddLogging(loggingBuilder =>
@@ -43,7 +45,7 @@ namespace FvManagerApi
             services.AddScoped<IProductService, ProductService>();
             services.AddScoped<IInvoiceService, InvoiceService>();
             services.AddScoped<ICompanyService, CompanyService>();
-            
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FvManagerApi", Version = "v1" });
@@ -53,8 +55,8 @@ namespace FvManagerApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, FvManagerSeeder fvManagerSeeder)
         {
+            app.UseResponseCaching();
             fvManagerSeeder.Seed();
-            app.UseHttpsRedirection();
 
             if (env.IsDevelopment())
             {
@@ -62,6 +64,11 @@ namespace FvManagerApi
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FvManagerApi v1"));
             }
+
+            app.UseMiddleware<ErrorHandlingMiddleware>();
+            app.UseMiddleware<RequestTimeMiddleware>();
+
+            app.UseHttpsRedirection();
 
             app.UseRouting();
 

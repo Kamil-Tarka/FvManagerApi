@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using FvManagerApi.Entities;
+using FvManagerApi.Exceptions;
 using FvManagerApi.Models;
 
 namespace FvManagerApi.Services
@@ -33,6 +34,11 @@ namespace FvManagerApi.Services
         {
             var product = _dbContext.Product.FirstOrDefault(p => p.Id == productId);
 
+            if (product is null)
+            {
+                throw new NotFoundException("Product not found");
+            }
+
             var productDto = _mapper.Map<ProductDto>(product);
 
             return productDto;
@@ -49,6 +55,11 @@ namespace FvManagerApi.Services
         {
             var product = _dbContext.Product.FirstOrDefault(p => p.Id == productId);
 
+            if (product is null)
+            {
+                throw new NotFoundException("Product not found");
+            }
+
             _dbContext.Product.Remove(product);
             _dbContext.SaveChanges();
         }
@@ -57,7 +68,12 @@ namespace FvManagerApi.Services
         {
             var product = _dbContext.Product.FirstOrDefault(p => p.Id == id);
 
-            if(dto.Name is not null && (dto.Name!="" || dto.Name!= " "))
+            if (product is null)
+            {
+                throw new NotFoundException("Product not found");
+            }
+
+            if (dto.Name is not null && (dto.Name!="" || dto.Name!= " "))
             {
                 product.Name = dto.Name;
             }
