@@ -23,7 +23,17 @@ namespace FvManagerApi.Middleware
             {
                 await next.Invoke(context);
             }
-            catch(NotFoundException notFoundException)
+            catch(BadRequestException badRequestException)
+            {
+                context.Response.StatusCode = 400;
+                await context.Response.WriteAsync(badRequestException.Message);
+            }
+            catch (ForbiddenException forbiddenException)
+            {
+                context.Response.StatusCode = 403;
+                await context.Response.WriteAsync(forbiddenException.Message);
+            }
+            catch (NotFoundException notFoundException)
             {
                 context.Response.StatusCode = 404;
                 await context.Response.WriteAsync(notFoundException.Message);

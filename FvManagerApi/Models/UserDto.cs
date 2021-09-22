@@ -2,19 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FvManagerApi.Entities;
 
-namespace FvManagerApi.Entities
+namespace FvManagerApi.Models
 {
-    public class User
+    public class UserDto
     {
         public int Id { get; set; }
         public string UserName { get; set; }
         public string UserEmail { get; set; }
-        public string PasswordHash { get; set; }
-
-        public int RoleId { get; set; }
-        public virtual Role Role { get; set; }
-
-        public bool IsActive { get; set; } = false;
+        public Role Role { get; set; }
+        public bool IsActive { get; set; }
     }
 }

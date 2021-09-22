@@ -4,12 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using FvManagerApi.Models;
 using FvManagerApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FvManagerApi.Controllers
 {
     [Route("api/fvmanager/invoice")]
     [ApiController]
+    [Authorize(Policy = "IsUserAccoundActive")]
     public class InvoiceController : ControllerBase
     {
         private IInvoiceService _invoiceService;

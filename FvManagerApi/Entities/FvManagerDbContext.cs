@@ -93,6 +93,10 @@ namespace FvManagerApi.Entities
                 .Property(u => u.PasswordHash)
                 .IsRequired();
 
+            modelBuilder.Entity<User>()
+                .Property(u => u.IsActive)
+                .IsRequired();
+
             modelBuilder.Entity<InvoicePossition>()
                 .Property(i => i.NetPrice)
                 .IsRequired()

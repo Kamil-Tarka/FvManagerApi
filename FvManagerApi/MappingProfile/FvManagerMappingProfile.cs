@@ -25,6 +25,9 @@ namespace FvManagerApi.MappingProfile
             CreateMap<CreateCompanyDto, Company>();
             CreateMap<Company, CompanyDto>();
 
+            CreateMap<User, UserDto>();
+
+            CreateMap<Role, RoleDto>();
         }
     }
 }

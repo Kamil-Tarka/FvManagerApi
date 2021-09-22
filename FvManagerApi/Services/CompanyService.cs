@@ -6,6 +6,7 @@ using AutoMapper;
 using FvManagerApi.Entities;
 using FvManagerApi.Exceptions;
 using FvManagerApi.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FvManagerApi.Services
 {

@@ -24,11 +24,11 @@ namespace FvManagerApi.Middleware
             await next.Invoke(context);
             _stopWatch.Stop();
 
-            var elapsedMiliseconds = _stopWatch.ElapsedMilliseconds;
+            var elapsedSeconds = _stopWatch.Elapsed.TotalSeconds;
 
-            if(elapsedMiliseconds/1000 > 5)
+            if(elapsedSeconds >= 5)
             {
-                var message = $"Request [{context.Request.Method}] at {context.Request.Path} took {elapsedMiliseconds} ms";
+                var message = $"Request [{context.Request.Method}] at {context.Request.Path} took {elapsedSeconds} s";
 
                 _logger.LogInformation(message);
             }
