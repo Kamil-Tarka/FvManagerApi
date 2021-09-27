@@ -25,9 +25,24 @@ namespace FvManagerApi.Services
         public int Create(CreateInvoiceDto dto)
         {
             var invoiceEntity = _mapper.Map<Invoice>(dto);
-
-            if (dto.InvoicePossitions.Any())
+            
+            if (invoiceEntity.InvoicePossitions.Any())
             {
+                var lastInvoiceInMonth = _dbContext.Invoice
+                    .Where(i => i.DateOfInvoice.Month==DateTime.Now.Month && i.DateOfInvoice.Year==DateTime.Now.Year)
+                    .OrderBy(i => i.DateOfInvoice)
+                    .LastOrDefault(i => i.DateOfInvoice.Month == DateTime.Now.Month);
+
+                if (lastInvoiceInMonth is not null)
+                {
+                    var lastInvoiceNumber = int.Parse(lastInvoiceInMonth.InvoiceNumber.Split("/")[0]);
+                    invoiceEntity.InvoiceNumber =$"{lastInvoiceNumber + 1}/{DateTime.Now.Month.ToString("d2")}/{DateTime.Now.Year}"; 
+                }
+                else
+                {
+                    invoiceEntity.InvoiceNumber = $"{1}/{DateTime.Now.Month.ToString("d2")}/{DateTime.Now.Year}";
+                }
+
                 _dbContext.Invoice.Add(invoiceEntity);
                 _dbContext.SaveChanges();
             }
