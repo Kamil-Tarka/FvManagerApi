@@ -22,15 +22,15 @@ namespace FvManagerApi.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<CompanyDto>> GetAll()
+        public ActionResult<List<CompanyDto>> GetAll([FromQuery] string searchName, [FromQuery] string searchNip)
         {
-            var result = _companyService.GetAll();
+            var result = _companyService.GetAll(searchName, searchNip);
 
             return Ok(result);
         }
 
         [HttpGet("{companyId}")]
-        public ActionResult<CompanyDto> GetById([FromRoute]int companyId)
+        public ActionResult<CompanyDto> GetById([FromRoute] int companyId)
         {
             var result = _companyService.GetById(companyId);
 
@@ -46,7 +46,7 @@ namespace FvManagerApi.Controllers
         }
 
         [HttpPut("{companyId}")]
-        public ActionResult Update([FromRoute]int companyId, [FromBody]UpdateCompanyDto dto)
+        public ActionResult Update([FromRoute] int companyId, [FromBody] UpdateCompanyDto dto)
         {
             _companyService.Update(companyId, dto);
 
@@ -54,7 +54,7 @@ namespace FvManagerApi.Controllers
         }
 
         [HttpDelete("{companyId}")]
-        public ActionResult Delete([FromRoute]int companyId)
+        public ActionResult Delete([FromRoute] int companyId)
         {
             _companyService.Delete(companyId);
 

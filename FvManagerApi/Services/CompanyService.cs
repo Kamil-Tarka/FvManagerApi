@@ -43,11 +43,15 @@ namespace FvManagerApi.Services
             _dbContext.SaveChanges();
         }
 
-        public List<CompanyDto> GetAll()
+        public List<CompanyDto> GetAll(string searchName, string searchNip)
         {
-            var companies = _mapper.Map<List<CompanyDto>>(_dbContext.Company);
+            var companies = _dbContext.Company
+                .Where(c => searchName == null || c.Name.Contains(searchName))
+                .Where(c => searchNip == null || c.Nip.Contains(searchNip))
+                .ToList();
+            var companiesDto = _mapper.Map<List<CompanyDto>>(companies);
 
-            return companies;
+            return companiesDto;
         }
 
         public CompanyDto GetById(int companyId)
@@ -73,27 +77,27 @@ namespace FvManagerApi.Services
                 throw new NotFoundException("Company not found");
             }
 
-            if (dto.Name is not null && company.Name!=dto.Name)
+            if (dto.Name is not null && company.Name != dto.Name)
             {
                 company.Name = dto.Name;
             }
-            if(company.Nip!=dto.Nip)
+            if (company.Nip != dto.Nip)
             {
                 company.Nip = dto.Nip;
             }
-            if(company.IsPhisicalPerson!=dto.IsPhisicalPerson)
+            if (company.IsPhisicalPerson != dto.IsPhisicalPerson)
             {
                 company.IsPhisicalPerson = dto.IsPhisicalPerson;
             }
-            if(dto.City is not null && company.City!=dto.City)
+            if (dto.City is not null && company.City != dto.City)
             {
                 company.City = dto.City;
             }
-            if(dto.Street is not null && company.Street!=dto.Street)
+            if (dto.Street is not null && company.Street != dto.Street)
             {
                 company.Street = dto.Street;
             }
-            if(dto.PostalCode is not null && company.PostalCode!=dto.PostalCode)
+            if (dto.PostalCode is not null && company.PostalCode != dto.PostalCode)
             {
                 company.PostalCode = dto.PostalCode;
             }

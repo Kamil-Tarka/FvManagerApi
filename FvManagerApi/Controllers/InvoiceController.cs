@@ -30,9 +30,9 @@ namespace FvManagerApi.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<InvoiceDto>> GetAll()
+        public ActionResult<List<InvoiceDto>> GetAll([FromQuery]string searchNumber, [FromQuery]string searchDateFrom, [FromQuery]string searchDateTo)
         {
-            var result = _invoiceService.GetAll();
+            var result = _invoiceService.GetAll(searchNumber, searchDateFrom, searchDateTo);
 
             return Ok(result);
         }

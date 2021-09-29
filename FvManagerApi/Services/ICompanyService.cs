@@ -10,7 +10,7 @@ namespace FvManagerApi.Services
     {
         public int Create(CreateCompanyDto dto);
         public CompanyDto GetById(int companyId);
-        public List<CompanyDto> GetAll();
+        public List<CompanyDto> GetAll(string searchName, string searchNip);
         public void Delete(int companyId);
         public void Update(int companyId, UpdateCompanyDto dto);
     }

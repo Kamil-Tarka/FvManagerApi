@@ -10,7 +10,7 @@ namespace FvManagerApi.Services
     {
         public int Create(CreateInvoiceDto dto);
         public InvoiceDto GetById(int invoiceId);
-        public List<InvoiceDto> GetAll();
+        public List<InvoiceDto> GetAll(string searchNumber, string searchDateFrom, string searchDateTo);
         public void Delete(int invoiceId);
         public void Update(int invoiceId, UpdateInvoiceDto dto);
     }

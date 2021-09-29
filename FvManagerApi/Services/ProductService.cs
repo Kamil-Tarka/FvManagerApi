@@ -44,11 +44,15 @@ namespace FvManagerApi.Services
             return productDto;
         }
 
-        public List<ProductDto> GetAll()
+        public List<ProductDto> GetAll(string searchName)
         {
-            var products = _mapper.Map<List<ProductDto>>(_dbContext.Product);
+            var products = _dbContext.Product
+                .Where(p => searchName == null || p.Name.Contains(searchName))
+                .ToList();
 
-            return products;
+            var productsDto = _mapper.Map<List<ProductDto>>(products);
+
+            return productsDto;
         }
 
         public void Delete(int productId)
@@ -73,7 +77,7 @@ namespace FvManagerApi.Services
                 throw new NotFoundException("Product not found");
             }
 
-            if (dto.Name is not null && (dto.Name!="" || dto.Name!= " "))
+            if (dto.Name is not null && (dto.Name != "" || dto.Name != " "))
             {
                 product.Name = dto.Name;
             }
@@ -81,7 +85,7 @@ namespace FvManagerApi.Services
             {
                 product.NetPrice = dto.NetPrice;
             }
-            if(dto.TaxRate>0)
+            if (dto.TaxRate > 0)
             {
                 product.TaxRate = dto.TaxRate;
             }

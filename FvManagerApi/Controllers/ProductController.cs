@@ -22,15 +22,15 @@ namespace FvManagerApi.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<ProductDto>> GetAll()
+        public ActionResult<List<ProductDto>> GetAll([FromQuery] string searchName)
         {
-            var result = _productService.GetAll();
+            var result = _productService.GetAll(searchName);
 
             return Ok(result);
         }
 
         [HttpGet("{productId}")]
-        public ActionResult<ProductDto> GetById([FromRoute]int productId)
+        public ActionResult<ProductDto> GetById([FromRoute] int productId)
         {
             var result = _productService.GetById(productId);
 
@@ -46,7 +46,7 @@ namespace FvManagerApi.Controllers
         }
 
         [HttpDelete("{productId}")]
-        public ActionResult Delete([FromRoute]int productId)
+        public ActionResult Delete([FromRoute] int productId)
         {
             _productService.Delete(productId);
 
@@ -54,7 +54,7 @@ namespace FvManagerApi.Controllers
         }
 
         [HttpPut("{productId}")]
-        public ActionResult Update([FromRoute]int productId, [FromBody]UpdateProductDto dto)
+        public ActionResult Update([FromRoute] int productId, [FromBody] UpdateProductDto dto)
         {
             _productService.Update(productId, dto);
 

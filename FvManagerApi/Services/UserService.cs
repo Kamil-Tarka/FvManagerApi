@@ -70,16 +70,24 @@ namespace FvManagerApi.Services
             _dbContext.SaveChanges();
         }
 
-        public List<UserDto> GetAll()
+        public List<UserDto> GetAll(string searchName, string searchEmail, string searchRole, string searchIsActive)
         {
-            var users = _mapper.Map<List<UserDto>>(_dbContext.User.Include(u => u.Role));
+            var users = _dbContext.User
+                .Include(u => u.Role)
+                .Where(u => searchName == null || u.UserName.Contains(searchName))
+                .Where(u => searchEmail == null || u.UserEmail.Contains(searchEmail))
+                .Where(u => searchIsActive == null || u.IsActive == bool.Parse(searchIsActive))
+                .Where(u => searchRole == null || u.Role.Name.Contains(searchRole))
+                .ToList();
 
-            return users;
+            var usersDto = _mapper.Map<List<UserDto>>(users);
+
+            return usersDto;
         }
 
         public UserDto GetById(int userId)
         {
-            var user = _mapper.Map<UserDto>(_dbContext.User.Include(u => u.Role).FirstOrDefault(u => u.Id==userId));
+            var user = _mapper.Map<UserDto>(_dbContext.User.Include(u => u.Role).FirstOrDefault(u => u.Id == userId));
 
             return user;
         }

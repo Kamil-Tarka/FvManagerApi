@@ -25,18 +25,18 @@ namespace FvManagerApi.Services
         public int Create(CreateInvoiceDto dto)
         {
             var invoiceEntity = _mapper.Map<Invoice>(dto);
-            
+
             if (invoiceEntity.InvoicePossitions.Any())
             {
                 var lastInvoiceInMonth = _dbContext.Invoice
-                    .Where(i => i.DateOfInvoice.Month==DateTime.Now.Month && i.DateOfInvoice.Year==DateTime.Now.Year)
+                    .Where(i => i.DateOfInvoice.Month == DateTime.Now.Month && i.DateOfInvoice.Year == DateTime.Now.Year)
                     .OrderBy(i => i.DateOfInvoice)
                     .LastOrDefault(i => i.DateOfInvoice.Month == DateTime.Now.Month);
 
                 if (lastInvoiceInMonth is not null)
                 {
                     var lastInvoiceNumber = int.Parse(lastInvoiceInMonth.InvoiceNumber.Split("/")[0]);
-                    invoiceEntity.InvoiceNumber =$"{lastInvoiceNumber + 1}/{DateTime.Now.Month.ToString("d2")}/{DateTime.Now.Year}"; 
+                    invoiceEntity.InvoiceNumber = $"{lastInvoiceNumber + 1}/{DateTime.Now.Month.ToString("d2")}/{DateTime.Now.Year}";
                 }
                 else
                 {
@@ -56,7 +56,7 @@ namespace FvManagerApi.Services
                 .Include(i => i.InvoicePossitions)
                 .FirstOrDefault(i => i.Id == invoiceId);
 
-            if(invoice is null)
+            if (invoice is null)
             {
                 throw new NotFoundException("Invoice not found");
             }
@@ -65,16 +65,21 @@ namespace FvManagerApi.Services
             _dbContext.SaveChanges();
         }
 
-        public List<InvoiceDto> GetAll()
+        public List<InvoiceDto> GetAll(string searchNumber, string searchDateFrom, string searchDateTo)
         {
-            var invoices = _mapper.Map<List<InvoiceDto>>(_dbContext.Invoice
+            var invoices = _dbContext.Invoice
                 .Include(i => i.InvoicePossitions)
                 .ThenInclude(ip => ip.Porduct)
                 .Include(i => i.Seller)
                 .Include(i => i.Buyer)
-                .Include(i => i.PaymentType));
+                .Include(i => i.PaymentType)
+                .Where(i => searchDateFrom == null || i.DateOfInvoice >= DateTime.Parse(searchDateFrom))
+                .Where(i => searchDateTo == null || i.DateOfInvoice < DateTime.Parse(searchDateTo).AddDays(1))
+                .Where(i => searchNumber == null || i.InvoiceNumber.Contains(searchNumber)).ToList();
 
-            return invoices;
+            var invoicesDto = _mapper.Map<List<InvoiceDto>>(invoices);
+
+            return invoicesDto;
         }
 
         public InvoiceDto GetById(int invoiceId)
@@ -108,15 +113,15 @@ namespace FvManagerApi.Services
                 throw new NotFoundException("Invoice not found");
             }
 
-            if (dto.PaymentTypeId>0 && dto.PaymentTypeId!=invoice.PaymentTypeId)
+            if (dto.PaymentTypeId > 0 && dto.PaymentTypeId != invoice.PaymentTypeId)
             {
                 invoice.PaymentTypeId = dto.PaymentTypeId;
             }
-            if(dto.SellerId>0 && dto.SellerId!=invoice.SellerId)
+            if (dto.SellerId > 0 && dto.SellerId != invoice.SellerId)
             {
                 invoice.SellerId = dto.SellerId;
             }
-            if(dto.BuyerId>0 && dto.BuyerId!=invoice.BuyerId)
+            if (dto.BuyerId > 0 && dto.BuyerId != invoice.BuyerId)
             {
                 invoice.BuyerId = dto.BuyerId;
             }

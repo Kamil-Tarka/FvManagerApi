@@ -12,7 +12,7 @@ namespace FvManagerApi.Services
         void DisableUser(int userId);
         void Delete(int userId);
         void Update(int userId, UpdateUserDto dto);
-        List<UserDto> GetAll();
+        List<UserDto> GetAll(string searchName, string searchEmail, string searchRole, string searchIsActive);
         UserDto GetById(int userId);
     }
 }

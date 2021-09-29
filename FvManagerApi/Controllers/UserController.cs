@@ -22,7 +22,7 @@ namespace FvManagerApi.Controllers
         }
 
         [HttpPost("enable/{userId}")]
-        public ActionResult EnableUser([FromRoute]int userId)
+        public ActionResult EnableUser([FromRoute] int userId)
         {
             _userService.EnableUser(userId);
 
@@ -38,15 +38,15 @@ namespace FvManagerApi.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<UserDto>> GetAll()
+        public ActionResult<List<UserDto>> GetAll([FromQuery] string searchName, [FromQuery] string searchEmail, [FromQuery] string searchRole, [FromQuery] string searchIsActive)
         {
-            var result = _userService.GetAll();
+            var result = _userService.GetAll(searchName, searchEmail, searchRole, searchIsActive);
 
             return Ok(result);
         }
 
         [HttpGet("{userId}")]
-        public ActionResult<UserDto> GetById([FromRoute]int userId)
+        public ActionResult<UserDto> GetById([FromRoute] int userId)
         {
             var result = _userService.GetById(userId);
 
@@ -62,7 +62,7 @@ namespace FvManagerApi.Controllers
         }
 
         [HttpPut("{userId}")]
-        public ActionResult UpdateUser([FromRoute] int userId, [FromBody]UpdateUserDto dto)
+        public ActionResult UpdateUser([FromRoute] int userId, [FromBody] UpdateUserDto dto)
         {
             _userService.Update(userId, dto);
 
