@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using FvManagerApi.Entities;
@@ -49,6 +50,22 @@ namespace FvManagerApi.Services
             var baseQuery = _dbContext.Company
                 .Where(c => companyQuery.SearchName == null || c.Name.Contains(companyQuery.SearchName))
                 .Where(c => companyQuery.SearchNip == null || c.Nip.Contains(companyQuery.SearchNip));
+
+            if (!string.IsNullOrEmpty(companyQuery.SortBy))
+            {
+
+                var columnsSekectors = new Dictionary<string, Expression<Func<Company, object>>>
+                {
+                    { nameof(Company.Name), c => c.Name },
+                    { nameof(Company.Nip), c => c.Nip }
+                };
+
+                var selectedColumn = columnsSekectors[companyQuery.SortBy];
+
+                baseQuery = companyQuery.SortDirection == SortDirection.ASC
+                    ? baseQuery.OrderBy(selectedColumn)
+                    : baseQuery.OrderByDescending(selectedColumn);
+            }
 
             var companies = baseQuery
                 .Skip(companyQuery.PageSize * (companyQuery.PageNumber - 1))

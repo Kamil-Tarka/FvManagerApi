@@ -12,5 +12,7 @@ namespace FvManagerApi.Models.Query
         public int PageNumber { get; set; }
         [Required]
         public int PageSize { get; set; }
+        public string SortBy { get; set; }
+        public SortDirection SortDirection { get; set; }
     }
 }

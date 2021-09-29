@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using FvManagerApi.Entities;
@@ -49,6 +50,22 @@ namespace FvManagerApi.Services
         {
             var baseQuery = _dbContext.Product
                 .Where(p => productQuery.SearchName == null || p.Name.Contains(productQuery.SearchName));
+
+            if (!string.IsNullOrEmpty(productQuery.SortBy))
+            {
+
+                var columnsSekectors = new Dictionary<string, Expression<Func<Product, object>>>
+                {
+                    { nameof(Product.Name), p => p.Name },
+                    { nameof(Product.NetPrice), p => p.NetPrice }
+                };
+
+                var selectedColumn = columnsSekectors[productQuery.SortBy];
+
+                baseQuery = productQuery.SortDirection == SortDirection.ASC
+                    ? baseQuery.OrderBy(selectedColumn)
+                    : baseQuery.OrderByDescending(selectedColumn);
+            }
 
             var products = baseQuery
                 .Skip(productQuery.PageSize * (productQuery.PageNumber - 1))

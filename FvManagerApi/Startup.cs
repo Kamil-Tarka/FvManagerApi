@@ -86,13 +86,15 @@ namespace FvManagerApi
             services.AddScoped<IUserService, UserService>();
 
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+
             services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
             services.AddScoped<IValidator<CreateInvoiceDto>, CreateInvoiceDtoValidator>();
             services.AddScoped<IValidator<Query>, QueryValidator>();
-            services.AddScoped<IValidator<CompanyQuery>, QueryValidator>();
-            services.AddScoped<IValidator<InvoiceQuery>, QueryValidator>();
-            services.AddScoped<IValidator<ProductQuery>, QueryValidator>();
-            services.AddScoped<IValidator<UserQuery>, QueryValidator>();
+            services.AddScoped<IValidator<CompanyQuery>, CompanyQueryValidator>();
+            services.AddScoped<IValidator<InvoiceQuery>, InvoiceQueryValidator>();
+            services.AddScoped<IValidator<ProductQuery>, ProductQueryValidator>();
+            services.AddScoped<IValidator<UserQuery>, UserQuerryValidator>();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FvManagerApi", Version = "v1" });

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using FvManagerApi.Entities;
@@ -78,8 +79,23 @@ namespace FvManagerApi.Services
                 .Where(u => userQuery.SearchName == null || u.UserName.Contains(userQuery.SearchName))
                 .Where(u => userQuery.SearchEmail == null || u.UserEmail.Contains(userQuery.SearchEmail))
                 .Where(u => userQuery.SearchIsActive == null || u.IsActive == bool.Parse(userQuery.SearchIsActive))
-                .Where(u => userQuery.SearchRole == null || u.Role.Name.Contains(userQuery.SearchRole))
-                .ToList();
+                .Where(u => userQuery.SearchRole == null || u.Role.Name.Contains(userQuery.SearchRole));
+
+            if (!string.IsNullOrEmpty(userQuery.SortBy))
+            {
+
+                var columnsSekectors = new Dictionary<string, Expression<Func<User, object>>>
+                {
+                    { nameof(User.UserName), u => u.UserName },
+                    { nameof(User.UserEmail), u => u.UserEmail }
+                };
+
+                var selectedColumn = columnsSekectors[userQuery.SortBy];
+
+                baseQuery = userQuery.SortDirection == SortDirection.ASC
+                    ? baseQuery.OrderBy(selectedColumn)
+                    : baseQuery.OrderByDescending(selectedColumn);
+            }
 
             var users = baseQuery
                .Skip(userQuery.PageSize * (userQuery.PageNumber - 1))

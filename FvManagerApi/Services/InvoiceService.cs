@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using AutoMapper;
 using FvManagerApi.Entities;
@@ -77,6 +78,22 @@ namespace FvManagerApi.Services
                 .Where(i => invoiceQuery.SearchDateFrom == null || i.DateOfInvoice >= DateTime.Parse(invoiceQuery.SearchDateFrom))
                 .Where(i => invoiceQuery.SearchDateTo == null || i.DateOfInvoice < DateTime.Parse(invoiceQuery.SearchDateTo).AddDays(1))
                 .Where(i => invoiceQuery.SearchNumber == null || i.InvoiceNumber.Contains(invoiceQuery.SearchNumber));
+
+            if (!string.IsNullOrEmpty(invoiceQuery.SortBy))
+            {
+
+                var columnsSekectors = new Dictionary<string, Expression<Func<Invoice, object>>>
+                {
+                    { nameof(Invoice.InvoiceNumber), i => i.InvoiceNumber },
+                    { nameof(Invoice.DateOfInvoice), i => i.DateOfInvoice }
+                };
+
+                var selectedColumn = columnsSekectors[invoiceQuery.SortBy];
+
+                baseQuery = invoiceQuery.SortDirection == SortDirection.ASC
+                    ? baseQuery.OrderBy(selectedColumn)
+                    : baseQuery.OrderByDescending(selectedColumn);
+            }
 
             var invoices = baseQuery
                 .Skip(invoiceQuery.PageSize * (invoiceQuery.PageNumber - 1))
