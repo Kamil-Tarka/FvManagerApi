@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FvManagerApi.Models;
+using FvManagerApi.Models.Query;
 using FvManagerApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,9 +31,9 @@ namespace FvManagerApi.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<InvoiceDto>> GetAll([FromQuery]string searchNumber, [FromQuery]string searchDateFrom, [FromQuery]string searchDateTo)
+        public ActionResult<PagetResult<InvoiceDto>> GetAll([FromQuery]InvoiceQuery invoiceQuery)
         {
-            var result = _invoiceService.GetAll(searchNumber, searchDateFrom, searchDateTo);
+            var result = _invoiceService.GetAll(invoiceQuery);
 
             return Ok(result);
         }

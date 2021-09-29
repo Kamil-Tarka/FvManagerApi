@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FvManagerApi.Models;
+using FvManagerApi.Models.Query;
 
 namespace FvManagerApi.Services
 {
@@ -12,7 +13,7 @@ namespace FvManagerApi.Services
         void DisableUser(int userId);
         void Delete(int userId);
         void Update(int userId, UpdateUserDto dto);
-        List<UserDto> GetAll(string searchName, string searchEmail, string searchRole, string searchIsActive);
+        PagetResult<UserDto> GetAll(UserQuery userQuery);
         UserDto GetById(int userId);
     }
 }

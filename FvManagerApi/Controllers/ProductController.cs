@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FvManagerApi.Models;
+using FvManagerApi.Models.Query;
 using FvManagerApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,9 +23,9 @@ namespace FvManagerApi.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<ProductDto>> GetAll([FromQuery] string searchName)
+        public ActionResult<PagetResult<ProductDto>> GetAll([FromQuery]ProductQuery productQuery)
         {
-            var result = _productService.GetAll(searchName);
+            var result = _productService.GetAll(productQuery);
 
             return Ok(result);
         }

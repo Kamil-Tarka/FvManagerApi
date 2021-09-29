@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FvManagerApi.Models;
+using FvManagerApi.Models.Query;
 
 namespace FvManagerApi.Services
 {
@@ -10,7 +11,7 @@ namespace FvManagerApi.Services
     {
         public int Create(CreateCompanyDto dto);
         public CompanyDto GetById(int companyId);
-        public List<CompanyDto> GetAll(string searchName, string searchNip);
+        public PagetResult<CompanyDto> GetAll(CompanyQuery companyQuery);
         public void Delete(int companyId);
         public void Update(int companyId, UpdateCompanyDto dto);
     }

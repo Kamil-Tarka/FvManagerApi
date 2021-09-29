@@ -6,6 +6,7 @@ using AutoMapper;
 using FvManagerApi.Entities;
 using FvManagerApi.Exceptions;
 using FvManagerApi.Models;
+using FvManagerApi.Models.Query;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -70,19 +71,26 @@ namespace FvManagerApi.Services
             _dbContext.SaveChanges();
         }
 
-        public List<UserDto> GetAll(string searchName, string searchEmail, string searchRole, string searchIsActive)
+        public PagetResult<UserDto> GetAll(UserQuery userQuery)
         {
-            var users = _dbContext.User
+            var baseQuery = _dbContext.User
                 .Include(u => u.Role)
-                .Where(u => searchName == null || u.UserName.Contains(searchName))
-                .Where(u => searchEmail == null || u.UserEmail.Contains(searchEmail))
-                .Where(u => searchIsActive == null || u.IsActive == bool.Parse(searchIsActive))
-                .Where(u => searchRole == null || u.Role.Name.Contains(searchRole))
+                .Where(u => userQuery.SearchName == null || u.UserName.Contains(userQuery.SearchName))
+                .Where(u => userQuery.SearchEmail == null || u.UserEmail.Contains(userQuery.SearchEmail))
+                .Where(u => userQuery.SearchIsActive == null || u.IsActive == bool.Parse(userQuery.SearchIsActive))
+                .Where(u => userQuery.SearchRole == null || u.Role.Name.Contains(userQuery.SearchRole))
                 .ToList();
+
+            var users = baseQuery
+               .Skip(userQuery.PageSize * (userQuery.PageNumber - 1))
+               .Take(userQuery.PageSize)
+               .ToList();
 
             var usersDto = _mapper.Map<List<UserDto>>(users);
 
-            return usersDto;
+            var result = new PagetResult<UserDto>(usersDto, baseQuery.Count(), userQuery.PageSize, userQuery.PageNumber);
+
+            return result;
         }
 
         public UserDto GetById(int userId)

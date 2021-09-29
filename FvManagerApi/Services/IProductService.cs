@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FvManagerApi.Models;
+using FvManagerApi.Models.Query;
 
 namespace FvManagerApi.Services
 {
@@ -10,7 +11,7 @@ namespace FvManagerApi.Services
     {
         public int Create(CreateProductDto dto);
         public ProductDto GetById(int productId);
-        public List<ProductDto> GetAll(string searchName);
+        public PagetResult<ProductDto> GetAll(ProductQuery productQuery);
         public void Delete(int productId);
         public void Update(int id, UpdateProductDto dto);
     }

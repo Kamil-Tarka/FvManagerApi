@@ -6,6 +6,7 @@ using AutoMapper;
 using FvManagerApi.Entities;
 using FvManagerApi.Exceptions;
 using FvManagerApi.Models;
+using FvManagerApi.Models.Query;
 using Microsoft.AspNetCore.Authorization;
 
 namespace FvManagerApi.Services
@@ -43,15 +44,22 @@ namespace FvManagerApi.Services
             _dbContext.SaveChanges();
         }
 
-        public List<CompanyDto> GetAll(string searchName, string searchNip)
+        public PagetResult<CompanyDto> GetAll(CompanyQuery companyQuery)
         {
-            var companies = _dbContext.Company
-                .Where(c => searchName == null || c.Name.Contains(searchName))
-                .Where(c => searchNip == null || c.Nip.Contains(searchNip))
+            var baseQuery = _dbContext.Company
+                .Where(c => companyQuery.SearchName == null || c.Name.Contains(companyQuery.SearchName))
+                .Where(c => companyQuery.SearchNip == null || c.Nip.Contains(companyQuery.SearchNip));
+
+            var companies = baseQuery
+                .Skip(companyQuery.PageSize * (companyQuery.PageNumber - 1))
+                .Take(companyQuery.PageSize)
                 .ToList();
+
             var companiesDto = _mapper.Map<List<CompanyDto>>(companies);
 
-            return companiesDto;
+            var result = new PagetResult<CompanyDto>(companiesDto, baseQuery.Count(), companyQuery.PageSize, companyQuery.PageNumber);
+
+            return result;
         }
 
         public CompanyDto GetById(int companyId)

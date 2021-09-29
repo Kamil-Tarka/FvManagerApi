@@ -6,6 +6,7 @@ using AutoMapper;
 using FvManagerApi.Entities;
 using FvManagerApi.Exceptions;
 using FvManagerApi.Models;
+using FvManagerApi.Models.Query;
 using Microsoft.EntityFrameworkCore;
 
 namespace FvManagerApi.Services
@@ -65,21 +66,28 @@ namespace FvManagerApi.Services
             _dbContext.SaveChanges();
         }
 
-        public List<InvoiceDto> GetAll(string searchNumber, string searchDateFrom, string searchDateTo)
+        public PagetResult<InvoiceDto> GetAll(InvoiceQuery invoiceQuery)
         {
-            var invoices = _dbContext.Invoice
+            var baseQuery = _dbContext.Invoice
                 .Include(i => i.InvoicePossitions)
                 .ThenInclude(ip => ip.Porduct)
                 .Include(i => i.Seller)
                 .Include(i => i.Buyer)
                 .Include(i => i.PaymentType)
-                .Where(i => searchDateFrom == null || i.DateOfInvoice >= DateTime.Parse(searchDateFrom))
-                .Where(i => searchDateTo == null || i.DateOfInvoice < DateTime.Parse(searchDateTo).AddDays(1))
-                .Where(i => searchNumber == null || i.InvoiceNumber.Contains(searchNumber)).ToList();
+                .Where(i => invoiceQuery.SearchDateFrom == null || i.DateOfInvoice >= DateTime.Parse(invoiceQuery.SearchDateFrom))
+                .Where(i => invoiceQuery.SearchDateTo == null || i.DateOfInvoice < DateTime.Parse(invoiceQuery.SearchDateTo).AddDays(1))
+                .Where(i => invoiceQuery.SearchNumber == null || i.InvoiceNumber.Contains(invoiceQuery.SearchNumber));
+
+            var invoices = baseQuery
+                .Skip(invoiceQuery.PageSize * (invoiceQuery.PageNumber - 1))
+                .Take(invoiceQuery.PageSize)
+                .ToList();
 
             var invoicesDto = _mapper.Map<List<InvoiceDto>>(invoices);
 
-            return invoicesDto;
+            var result = new PagetResult<InvoiceDto>(invoicesDto, baseQuery.Count(), invoiceQuery.PageSize, invoiceQuery.PageNumber);
+
+            return result;
         }
 
         public InvoiceDto GetById(int invoiceId)

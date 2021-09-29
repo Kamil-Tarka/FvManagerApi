@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FvManagerApi.Models;
+using FvManagerApi.Models.Query;
 using FvManagerApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -38,9 +39,9 @@ namespace FvManagerApi.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<UserDto>> GetAll([FromQuery] string searchName, [FromQuery] string searchEmail, [FromQuery] string searchRole, [FromQuery] string searchIsActive)
+        public ActionResult<PagetResult<UserDto>> GetAll([FromQuery] UserQuery userQuery)
         {
-            var result = _userService.GetAll(searchName, searchEmail, searchRole, searchIsActive);
+            var result = _userService.GetAll(userQuery);
 
             return Ok(result);
         }

@@ -22,6 +22,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using FvManagerApi.Models.Query;
 
 namespace FvManagerApi
 {
@@ -87,6 +88,11 @@ namespace FvManagerApi
             services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
             services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
             services.AddScoped<IValidator<CreateInvoiceDto>, CreateInvoiceDtoValidator>();
+            services.AddScoped<IValidator<Query>, QueryValidator>();
+            services.AddScoped<IValidator<CompanyQuery>, QueryValidator>();
+            services.AddScoped<IValidator<InvoiceQuery>, QueryValidator>();
+            services.AddScoped<IValidator<ProductQuery>, QueryValidator>();
+            services.AddScoped<IValidator<UserQuery>, QueryValidator>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FvManagerApi", Version = "v1" });

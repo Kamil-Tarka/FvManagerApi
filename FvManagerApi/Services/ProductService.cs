@@ -6,6 +6,7 @@ using AutoMapper;
 using FvManagerApi.Entities;
 using FvManagerApi.Exceptions;
 using FvManagerApi.Models;
+using FvManagerApi.Models.Query;
 
 namespace FvManagerApi.Services
 {
@@ -44,15 +45,21 @@ namespace FvManagerApi.Services
             return productDto;
         }
 
-        public List<ProductDto> GetAll(string searchName)
+        public PagetResult<ProductDto> GetAll(ProductQuery productQuery)
         {
-            var products = _dbContext.Product
-                .Where(p => searchName == null || p.Name.Contains(searchName))
+            var baseQuery = _dbContext.Product
+                .Where(p => productQuery.SearchName == null || p.Name.Contains(productQuery.SearchName));
+
+            var products = baseQuery
+                .Skip(productQuery.PageSize * (productQuery.PageNumber - 1))
+                .Take(productQuery.PageSize)
                 .ToList();
 
             var productsDto = _mapper.Map<List<ProductDto>>(products);
 
-            return productsDto;
+            var result = new PagetResult<ProductDto>(productsDto, baseQuery.Count(), productQuery.PageSize, productQuery.PageNumber);
+
+            return result;
         }
 
         public void Delete(int productId)
